@@ -1,0 +1,98 @@
+
+			var base = require('./common/basePixel.js'); var script = {
+  // 自定义属性，属性值要与数据源的tag进行绑定
+  attr:{
+    zz:{tagName:"device1-1",value:0},
+    fz:{tagName:"device1-2",value:0},
+    st:{tagName:"device1-3",value:0},
+  },
+
+  //事件捕捉回调
+  Event:function(event){
+    // event.name 可能是 mouse:down、mouse:up、mouse:over
+    //this.setCtr('cecece');
+    if(event == "mouse:down")
+    {
+        var state = this._getState();
+        if(state)
+        {
+          if(state == 'zz')
+          {
+            this.setCtr('device1-2','1');
+            this.setCtr('device1-1','0');
+            this.setCtr('device1-3','0');
+          }
+          else if(state == 'fz')
+          {
+            this.setCtr('device1-3','1');
+            this.setCtr('device1-2','0');
+            this.setCtr('device1-1','0');
+          }
+          else if(state == 'st')
+          {
+            this.setCtr('device1-1','1');
+            this.setCtr('device1-2','0');
+            this.setCtr('device1-3','0');
+          }
+        }
+    }
+
+  },
+  // 数据组态的方法，每次有属性（tag数据）的更新都将触发此方法
+  data_handle:function (){
+    if(this.attr.zz.value == '1')
+    {
+      this.setState('zz');
+    }
+     if(this.attr.fz.value == '1')
+    {
+      this.setState('fz');
+    }
+    if(this.attr.st.value == '1')
+    {
+      this.setState('st');
+    }
+
+  },
+  // 数据消费的方法
+  consume_data:function(state){
+    //console.log('数据驱动');
+    //console.log(state);
+    switch(state )
+    {
+      case 'zz':
+        this.animate.rotate = 1;
+        break;
+      case 'fz':
+         this.animate.rotate = 2;
+        break;
+      case 'st':
+         this.animate.rotate = 0;
+        break;
+    }
+  },
+
+  //自定义方法 获取当前状态
+  _getState:function(){
+    if(this.animate.rotate == 1)
+    {
+      return 'zz';
+    }
+    else if(this.animate.rotate == 2)
+    {
+       return 'fz';
+    }
+    else if(this.animate.rotate == 0)
+    {
+       return 'st';
+    }
+    else {
+      return null;
+    }
+  },
+
+}
+			for(let k in base){eval('script.'+k+' = '+base[k]);};
+			script.id = 'fengji1'; script.type='fengji';script.canvas={"objects":[{"type":"group","originX":"center","originY":"center","left":211.69,"top":200.46,"width":201,"height":100.5,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":0.62,"scaleY":1.19,"angle":-10,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"guid":"fengji1","code":"","pname":"风机","objects":[{"type":"circle","originX":"center","originY":"center","left":0,"top":0,"width":200,"height":200,"fill":"#eef","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":0.5,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"radius":100,"startAngle":0,"endAngle":6.283185307179586},{"type":"text","originX":"center","originY":"center","left":0,"top":0,"width":60,"height":33.9,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"风机","fontSize":30,"fontWeight":"normal","fontFamily":"Times New Roman","fontStyle":"normal","lineHeight":1.16,"underline":false,"overline":false,"linethrough":false,"textAlign":"left","textBackgroundColor":"","charSpacing":0,"styles":{}}]}],"guid":"doc1","isMainDoc":true}
+			module.exports = script;
+			

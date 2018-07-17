@@ -1,0 +1,1 @@
+{"id":"fengji","attr":"attr","yw_desc":{"need_data":["fengji"],"result_data":null,"methods":"function(data){data = JSON.parse(data); var sum = 0;for(var i of data){sum += Number(i.v);}return (sum /data.length).toFixed(2);}"},"act_attr_desc":{"methods":"function(data){console.log('数据消费中...');console.log(data);}"}}

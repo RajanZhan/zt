@@ -1,0 +1,136 @@
+var BasePixel = require('../../../basePixel'); 
+					var basePixel =  BasePixel;
+					var attr = JSON.parse('[{"attrName":"zz","value":"device2-1","editor":"text","tagName":"device2-1"},{"attrName":"fz","value":"device2-2","editor":"text","tagName":"device2-2"},{"attrName":"st","value":"device2-3","editor":"text","tagName":"device2-3"}]')
+					; var myPIxel = 
+  {
+    /*@ 数据处理端
+    * 访问自定义属性 this.getAttr('attr_name');
+
+    * 访问图元状态值，状态由key 状态名、value 状态值构成。
+       例如 this.setState('rotate',1),来设置rotate 这个状态的值。
+
+    * 获取图元的状态值，this.getState('状态名')。
+    *
+    */
+    process:{
+
+      /*
+      数据处理方法 ，每次自定义属性中的值发生变化，都将触发此
+      */
+      data_handler:function(){
+        
+        // 正转
+        if(this.getAttr('zz').value == '1')
+        {
+          this.setState('zz'); 
+        }
+        
+        // 反转
+         if(this.getAttr('fz').value == '1')
+        {
+          this.setState('fz');
+        }
+        
+        // 停止
+        if(this.getAttr('st').value == '1')
+        {
+          this.setState('st');
+        }
+      }  
+    },
+
+    /*@ 数据消费端
+      * 通用旋转方法，this.animate.rotate(animate_type),
+        当animate_type 为1时正转、2反转、0停止。
+
+      * 通用发布控制方法，this.setCtr(attr_name,value),通过该方法
+        可以下发控制到设备端，attr_name 为数据处理端的对应的attr，
+        value为对应的值
+
+      * 获取图元的状态值，this.getState('状态名')。
+
+    */
+    consume:{
+
+      /*
+       * 鼠标事件监听 ，event的值可能为 mouse:over,mouse:down,
+         mouse:up
+      */
+      Event:function(event_type,event){
+        //console.log("事件监听");
+         //console.log(event);
+        //console.log(obj.state);
+        //console.log( this.getState());
+        if(event_type == "mouse:down"){
+         
+          //console.log("mouse down");
+          //console.log(event.e);
+          var state = this.getState();
+          //console.log(state);
+          switch(state){
+            case 'zz': // 正转
+              this.setCtr("fz",1);// 下发反转的控制
+              break;
+            case 'fz':
+              this.setCtr('st',1);// 下发停止控制
+              break;
+            case 'st':
+              this.setCtr('zz',1);//下发控制的曹组
+              break;
+          }
+        }
+        else if(event_type == "mouse:move"){
+          let statusName = '';
+          var state = this.getState();
+          switch(state){
+            case 'zz':
+              statusName = '正转';
+              break;
+            case 'fz':
+             statusName = '反转';
+              break;
+            case 'st':
+              statusName = '停止';
+              break;
+          }
+          this.showDialog('status',{left:event.e.clientX + 10,top:event.e.clientY+10},{"ID":this.scada_attr.guid,'name':'','zh':'','status':statusName});
+        }
+        else if(event_type == "mouse:out")
+        {
+          this.removeDialog();
+        }
+      },
+
+      /*
+       * 数据消费方法 ，当数据处理端(process) 调用
+        this.setState()来设置状态时，将会触发次消费方法
+      */
+      consume_data:function(state){
+        switch(state)
+        {
+          case 'zz':
+             this.animate.rotate = 1;
+             break;
+          case 'fz':
+             this.animate.rotate = 2;
+             break;
+          case 'st':
+             this.animate.rotate = 0;
+             break;
+        }
+      },
+
+    }
+  }
+  
+						basePixel.attr = attr;
+						basePixel.doc_id = 'str_outhlmCii_';
+						basePixel.guid = 'str_yEHwCnghDe';
+						basePixel.pro_id = 'str_jdjsCIwvc_';
+						
+						for(let key in myPIxel.process){
+						basePixel[key] = myPIxel.process[key];
+						}
+						basePixel.consume = myPIxel.consume;
+						module.exports = basePixel;
+					

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>开发平台</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script src="/public/js/socket.io.js"></script>
+</head>
+<body>
+
+<h1>开发平台</h1>
+<fieldset>
+    <legend>device管理</legend>
+    <div id="device_list">
+        <ul>
+            
+        </ul>
+    </div>
+    <button id="addDevice">添加设备</button>
+</fieldset>
+<button id="run">运行图元</button>
+<script>
+    $(function () {
+
+        var ty_obj = null;
+        var client = io.connect();
+        client.on('connect',function () {
+            console.log('connect ok');
+            $("#run").click(function () {
+
+                var selected_ty = $("#ty_list").val();
+                if(selected_ty)
+                {
+                   /* $.post("/runTy",{ty:selected_ty},function(result){
+                        console.log(result)
+                    });*/
+                   client.emit('runTy',{ty:selected_ty});
+                }
+
+            })
+        })
+
+        // 获取服务器推送的图元消费数据
+        client.on('ty_msg',function (data) {
+
+            if(ty_obj)
+            {
+                //console.log(data);
+                eval(ty_obj.on_msg + "("+data+")");
+            }
+        })
+
+        // 获取图元的描述数据
+        client.on("act_attr_desc",function (data) {
+            ty_obj = JSON.parse(data);
+        })
+
+
+        // 添加设备
+        $("#addDevice").click(function(){
+            var token =  prompt("请输入设备的token");
+            if(token)
+            {
+                client.emit('addDevice',{device_id:token},function(err,res){
+                    if(err)
+                    {
+                        alert('通信发生错误');
+                    }
+                    
+                    // TODO 
+                    console.log(res);
+
+                });
+            }
+        })
+
+
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script src="/public/js/socket.io.js"></script>
+</head>
+<body>
+<h1>Index</h1>
+<fieldset>
+    <legend>图元列表</legend>
+    <select id="ty_list">
+        <option value="0">请选择</option>
+        <% for(var i=0; i<ty_list.length;i++) {%>
+        <option value="<%= ty_list[i] %>"><%= ty_list[i] %></option>
+        <% } %>
+    </select>
+</fieldset>
+<button id="run">运行图元</button>
+<script>
+    $(function () {
+
+        var ty_obj = null;
+        var client = io.connect();
+        client.on('connect',function () {
+            console.log('connect ok');
+            $("#run").click(function () {
+
+                var selected_ty = $("#ty_list").val();
+                if(selected_ty)
+                {
+                   /* $.post("/runTy",{ty:selected_ty},function(result){
+                        console.log(result)
+                    });*/
+                   client.emit('runTy',{ty:selected_ty});
+                }
+
+            })
+        })
+
+        // 获取服务器推送的图元消费数据
+        client.on('ty_msg',function (data) {
+
+            if(ty_obj)
+            {
+                //console.log(data);
+                eval(ty_obj.on_msg + "("+data+")");
+            }
+        })
+
+        // 获取图元的描述数据
+        client.on("act_attr_desc",function (data) {
+            ty_obj = JSON.parse(data);
+        })
+
+
+
+    })
+
+</script>
+</body>
+</html>
